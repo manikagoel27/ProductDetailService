@@ -1,6 +1,7 @@
 package org.example.Controller;
 
 import org.example.Entity.ProductDetails;
+import org.example.Exception.InvalidProductException;
 import org.example.Service.ProductDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,35 @@ public class ProductDetailsController {
     ProductDetailsService productDetailsService;
     @PostMapping
     public ResponseEntity<String> addProduct(@RequestBody ProductDetails product) {
-        productDetailsService.addProduct(product);
-        return ResponseEntity.ok("Product added successfully");
+        try {
+            productDetailsService.addProduct(product);
+            return ResponseEntity.ok("Product added successfully");
+        } catch(InvalidProductException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+
+        }
     }
+
+    @PutMapping
+    public ResponseEntity<String> updateProduct(@RequestBody ProductDetails product) {
+        try{
+            productDetailsService.updateProduct(product);
+            return ResponseEntity.ok("Product updated successfully");
+        } catch (InvalidProductException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> removeProduct(@PathVariable String id) {
-        productDetailsService.removeProduct(id);
-        return ResponseEntity.ok("Product removed successfully");
+        try{
+            productDetailsService.removeProduct(id);
+            return ResponseEntity.ok("Product removed successfully");
+        } catch (InvalidProductException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
     }
 
     @GetMapping
